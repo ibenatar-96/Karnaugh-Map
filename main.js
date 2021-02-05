@@ -1,6 +1,7 @@
 //var btn = document.getElementById("generate");
 var rowSize = 1;
 var colSize = 1;
+var table = document.getElementById('tab');
 var Map = [];
 function changeVars(value){
     if(value=="Var2"){
@@ -27,7 +28,6 @@ function changeVars(value){
 }
 
 function generate2(){
-    var table = document.getElementById('tab');
     clearTable();
     var grayRow = generateGrayarr(rowSize);
     var grayCol = generateGrayarr(colSize);
