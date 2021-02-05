@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+</head>
+<body>
+  <div>
+    <h2>Karnuagh Map Min Calculator</h2>
+  </div>
+  <h4>Method</h4>
+  <form method="GET">
+    <h4>Please A Choose Method</h4>
+    <input name="chosenMethod" type="radio" value="POS" /> POS<br />
+    <input name="chosenMethod" type="radio" value="SOP" /> SOP<br />
+    <h4>Choose Number Of Variables</h4>
+    <select name="chosenVars" onchange="changeVars(value)"></h5>
+      <option value="Var0"></option>
+      <option value="Var2">2</option>
+      <option value="Var3">3</option>
+      <option value="Var4">4</option>
+      <option value="Var5">5</option>
+      <option value="Var6">6</option>
+    </select>
+    <br />
+    <br />
+    <table border="1" id="tab"></table>
+    <br />
+    <button name="generate">Generate</button>
+    <script src="main.js"></script>
+  </form>
+</body>
+</html>
