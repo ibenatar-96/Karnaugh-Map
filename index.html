@@ -9,9 +9,9 @@
   </div>
   <h4>Method</h4>
   <form method="GET">
-    <h4>Please A Choose Method</h4>
-    <input name="chosenMethod" type="radio" value="POS" /> POS<br />
-    <input name="chosenMethod" type="radio" value="SOP" /> SOP<br />
+    <h4>Please Choose A Method</h4>
+    <input name="chosenMethod" type="radio" value="POS" onchange="pos()" /> POS<br />
+    <input name="chosenMethod" type="radio" value="SOP" onchange="sop()" /> SOP<br />
     <h4>Choose Number Of Variables</h4>
     <select name="chosenVars" onchange="changeVars(value)"></h5>
       <option value="Var0"></option>
@@ -25,7 +25,8 @@
     <br />
     <table border="1" id="tab"></table>
     <br />
-    <button name="generate">Generate</button>
+    <button type="button" name="generate" onclick="retres()">Generate</button>
+    <button type="button" name="clear" onclick="generate2()">Clear</button>
     <script src="main.js"></script>
   </form>
 </body>

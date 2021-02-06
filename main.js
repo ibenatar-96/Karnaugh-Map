@@ -1,31 +1,10 @@
-//var btn = document.getElementById("generate");
+var btnGen = document.getElementById("generate");
+var btnCl = document.getElementById("generate");
+var method;
 var rowSize = 1;
 var colSize = 1;
 var table = document.getElementById('tab');
-var Map = [];
-function changeVars(value){
-    if(value=="Var2"){
-        rowSize = 1;
-        colSize = 1;
-    }
-    if(value=="Var3"){
-        rowSize = 1;
-        colSize = 2;
-    }
-    if(value=="Var4"){
-        rowSize = 2;
-        colSize = 2;
-    }
-    if(value=="Var5"){
-        rowSize = 2;
-        colSize = 3;
-    }
-    if(value=="Var6"){
-        rowSize = 3;
-        colSize = 3;
-    }
-    generate2();
-}
+var map = [];
 
 function generate2(){
     clearTable();
@@ -33,21 +12,19 @@ function generate2(){
     var grayCol = generateGrayarr(colSize);
     var tr2 = document.createElement('tr');
     tr2.appendChild(document.createElement('th'));
-    for(var head=1; head<Math.pow(2,colSize)+1; head++){
+    for(var head=1; head<colSize+1; head++){
         var th = document.createElement('th');
         var text2 = document.createTextNode(grayCol[head-1]);
-        console.log(grayCol);
         th.appendChild(text2);
         tr2.appendChild(th);
     }
     table.appendChild(tr2);
-    for(var i=0; i<Math.pow(2,rowSize); i++){
+    for(var i=0; i<rowSize; i++){
         var tr = document.createElement('tr');
-        for(var j=0; j<Math.pow(2,colSize)+1; j++){
+        for(var j=0; j<colSize+1; j++){
             if(j==0){
                 var th = document.createElement('th');
                 var text2 = document.createTextNode(grayRow[i]);
-                console.log(text2);
                 th.appendChild(text2);
                 tr.appendChild(th);
                 continue;
@@ -55,13 +32,13 @@ function generate2(){
             var td = document.createElement('td');
             var input = document.createElement('input');
             input.type = "text";
+            input.className = "my-input";
             input.style = "width:25px";
             td.append(input)
             tr.appendChild(td);
         }
         table.appendChild(tr);
     }
-    console.log(grayRow,grayCol);
 }
 
 function pad(size,n) {
@@ -89,4 +66,59 @@ function clearTable(){
         table.deleteRow(i);
     }
 }
-console.log(Map);
+function calculate(){
+    map2 = new Array(rowSize);
+    for(var r=0; r<rowSize; r++){
+        map2[r] = new Array(colSize);
+    }
+    for(var r=0; r<rowSize; r++){
+        for(var c=0; c<colSize; c++){
+            var results = document.getElementsByClassName("my-input");
+            console.log(results);
+            var ch = parseInt(results[(r*colSize)+c].value);
+            if(ch!=0 && ch!=1 && ch!=-1){
+                throw alert("Please insert correct numbers");
+            }
+            map2[r][c] = ch;
+        }
+    }
+    console.log(map2);
+    return map2;
+}
+function retres(){
+    map = calculate();
+    for(var row=0; row<rowSize; row++){
+        for(var col=0; col<colSize; col++){
+        }
+    }
+}
+function pos(){
+    method = 0;
+}
+function sop(){
+    method = 1;
+}
+function changeVars(value){
+    if(value=="Var2"){
+        rowSize = Math.pow(2,1);
+        colSize = Math.pow(2,1);
+    }
+    if(value=="Var3"){
+        rowSize = Math.pow(2,1);
+        colSize = Math.pow(2,2);
+    }
+    if(value=="Var4"){
+        rowSize = Math.pow(2,2);
+        colSize = Math.pow(2,2);
+    }
+    if(value=="Var5"){
+        rowSize = Math.pow(2,2);
+        colSize = Math.pow(2,3);
+    }
+    if(value=="Var6"){
+        rowSize = Math.pow(2,3);
+        colSize = Math.pow(2,3);
+    }
+    generate2();
+}
+console.log(map);
