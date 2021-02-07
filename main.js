@@ -127,18 +127,44 @@ function isAllSame(row,col,i,j){
 function joinArr(arr){
     var y = 0;
     var x = 0;
+    var same = [];
     while(y<arr.length){
+        if(arr[y].col + arr[y].j == colSize){
+            y++;
+            continue;
+        }
         if(hasSymCol(arr[y])){
-            arr[y].mul = 2*arr[y].mul;
+            var col = arr[y].col;
+            var row = arr[y].row;
+            var i = arr[y].i;
+            var j = arr[y].j;
+            var mul = arr[y].mul;
+            same.push({col,row,i,j,mul});
+            arr.splice(y,1);
       }
-      y++;
+      else{
+          y++;
+      }
     }
     while(x<arr.length){
+        if(arr[x].row + arr[x].i == rowSize){
+            x++;
+            continue;
+        }
         if(hasSymRow(arr[x])){
-            arr[x].mul = 2*arr[x].mul;
+            var col = arr[x].col;
+            var row = arr[x].row;
+            var i = arr[x].i;
+            var j = arr[x].j;
+            var mul = arr[x].mul;
+            same.push({col,row,i,j,mul});
+            arr.splice(x,1);
       }
-      x++;
+      else{
+          x++;
+      }
     }
+    console.log(same);
 }
 function cleanArr(arr){
     for(var x=0 ; x<arr.length; x++){
