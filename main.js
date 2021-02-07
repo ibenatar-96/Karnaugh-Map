@@ -6,10 +6,16 @@ var colSize = 1;
 var table = document.getElementById('tab');
 var map = [];
 
+function changeVars(value){
+    var val = parseInt(value);
+    colSize = Math.pow(2,Math.ceil(val/2));
+    rowSize = Math.pow(2,Math.floor(val/2));
+    generate2();
+}
 function generate2(){
     clearTable();
-    var grayRow = generateGrayarr(rowSize);
-    var grayCol = generateGrayarr(colSize);
+    var grayRow = generateGrayarr(Math.log2(rowSize));
+    var grayCol = generateGrayarr(Math.log2(colSize));
     var tr2 = document.createElement('tr');
     tr2.appendChild(document.createElement('th'));
     for(var head=1; head<colSize+1; head++){
@@ -74,51 +80,68 @@ function calculate(){
     for(var r=0; r<rowSize; r++){
         for(var c=0; c<colSize; c++){
             var results = document.getElementsByClassName("my-input");
-            console.log(results);
             var ch = parseInt(results[(r*colSize)+c].value);
             if(ch!=0 && ch!=1 && ch!=-1){
-                throw alert("Please insert correct numbers");
+                throw alert("Please insert valid numbers");
             }
             map2[r][c] = ch;
         }
     }
-    console.log(map2);
     return map2;
 }
 function retres(){
+    if(method != 0 && method != 1){
+        throw alert("Please choose a method");
+    }
+    var arr = [];
     map = calculate();
     for(var row=0; row<rowSize; row++){
         for(var col=0; col<colSize; col++){
+            for(var i=1; i<rowSize+1 && (row+i)<(rowSize+1); i=i*2){
+                for(var j=1; j<colSize+1 && (col+j)<(colSize+1); j=j*2){
+                    if(isAllSame(row,col,i,j)){
+                        var mul = i*j;
+                        arr.push({col,row,i,j,mul});
+                    }
+                }
+            }
+        }
+    }
+    arr.sort(function(a,b) {return b.mul - a.mul});
+    console.log(arr);
+    cleanArr(arr);
+    calculateVar(arr);
+}
+function isAllSame(row,col,i,j){
+    for(var a=0; a<i; a++){
+        for(var b=0; b<j; b++){
+            if(map[row+a][col+b] != method){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+function cleanArr(arr){
+    for(var x=0 ; x<arr.length; x++){
+        var y = x+1;
+        while(y<arr.length){
+            if(arr[x].col + arr[x].j >= arr[y].col + arr[y].j && 
+                arr[x].row + arr[x].i >= arr[y].row + arr[y].i){
+                    arr.splice(y,1);
+                }
+            else{
+                y++;
+            }
         }
     }
 }
-function pos(){
-    method = 0;
+function calculateVar(arr){
+    for(var i=0; i<arr.length; i++){
+        
+    }
 }
-function sop(){
-    method = 1;
+function changeMethod(value){
+    method = parseInt(value);
+    console.log(method);
 }
-function changeVars(value){
-    if(value=="Var2"){
-        rowSize = Math.pow(2,1);
-        colSize = Math.pow(2,1);
-    }
-    if(value=="Var3"){
-        rowSize = Math.pow(2,1);
-        colSize = Math.pow(2,2);
-    }
-    if(value=="Var4"){
-        rowSize = Math.pow(2,2);
-        colSize = Math.pow(2,2);
-    }
-    if(value=="Var5"){
-        rowSize = Math.pow(2,2);
-        colSize = Math.pow(2,3);
-    }
-    if(value=="Var6"){
-        rowSize = Math.pow(2,3);
-        colSize = Math.pow(2,3);
-    }
-    generate2();
-}
-console.log(map);
