@@ -82,7 +82,8 @@ function calculate(){
             var results = document.getElementsByClassName("my-input");
             var ch = parseInt(results[(r*colSize)+c].value);
             if(ch!=0 && ch!=1 && ch!=-1){
-                throw alert("Please insert valid numbers");
+                //throw alert("Please insert valid numbers");
+                ch = 0; //TO DELETE THIS!!! to add maybe autofill!!!
             }
             map2[r][c] = ch;
         }
@@ -109,7 +110,7 @@ function retres(){
     }
     arr.sort(function(a,b) {return b.mul - a.mul});
     cleanArr(arr);
- //   joinArr(arr);
+    joinArr(arr);
     calculateVar(arr);
     console.log(arr);
 }
@@ -128,11 +129,13 @@ function joinArr(arr){
     var x = 0;
     while(y<arr.length){
         if(hasSymCol(arr[y])){
+            arr[y].mul = 2*arr[y].mul;
       }
       y++;
     }
     while(x<arr.length){
         if(hasSymRow(arr[x])){
+            arr[x].mul = 2*arr[x].mul;
       }
       x++;
     }
@@ -152,13 +155,13 @@ function cleanArr(arr){
     }
 }
 function hasSymCol(value){
-    if(isAllSame(value.row, colSize-1-value.col,value.i,value.j)){
+    if(isAllSame(value.row, colSize-value.col-value.j,value.i,value.j)){
         return true;
     }
     return false;
 }
 function hasSymRow(value){
-    if(isAllSame(rowSize-1-value.row, value.col, value.i, value.j)){
+    if(isAllSame(rowSize-value.row-value.i, value.col, value.i, value.j)){
         return true;
     }
     return false;
