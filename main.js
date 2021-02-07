@@ -108,26 +108,41 @@ function retres(){
         }
     }
     arr.sort(function(a,b) {return b.mul - a.mul});
-    console.log(arr);
     cleanArr(arr);
+ //   joinArr(arr);
     calculateVar(arr);
+    console.log(arr);
 }
 function isAllSame(row,col,i,j){
     for(var a=0; a<i; a++){
         for(var b=0; b<j; b++){
-            if(map[row+a][col+b] != method){
+            if(map[row+a][col+b] != method & map[row+a][col+b] != -1){
                 return false;
             }
         }
     }
     return true;
 }
+function joinArr(arr){
+    var y = 0;
+    var x = 0;
+    while(y<arr.length){
+        if(hasSymCol(arr[y])){
+      }
+      y++;
+    }
+    while(x<arr.length){
+        if(hasSymRow(arr[x])){
+      }
+      x++;
+    }
+}
 function cleanArr(arr){
     for(var x=0 ; x<arr.length; x++){
         var y = x+1;
         while(y<arr.length){
-            if(arr[x].col + arr[x].j >= arr[y].col + arr[y].j && 
-                arr[x].row + arr[x].i >= arr[y].row + arr[y].i){
+            if((arr[x].col <= arr[y].col & arr[x].col + arr[x].j >= arr[y].col + arr[y].j) && 
+                (arr[x].row <= arr[y].row & arr[x].row + arr[x].i >= arr[y].row + arr[y].i)){
                     arr.splice(y,1);
                 }
             else{
@@ -136,9 +151,21 @@ function cleanArr(arr){
         }
     }
 }
+function hasSymCol(value){
+    if(isAllSame(value.row, colSize-1-value.col,value.i,value.j)){
+        return true;
+    }
+    return false;
+}
+function hasSymRow(value){
+    if(isAllSame(rowSize-1-value.row, value.col, value.i, value.j)){
+        return true;
+    }
+    return false;
+}
 function calculateVar(arr){
     for(var i=0; i<arr.length; i++){
-        
+
     }
 }
 function changeMethod(value){
