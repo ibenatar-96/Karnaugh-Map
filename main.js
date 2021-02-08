@@ -1,5 +1,3 @@
-var btnGen = document.getElementById("generate");
-var btnCl = document.getElementById("generate");
 var method;
 var rowSize = 1;
 var colSize = 1;
@@ -82,7 +80,7 @@ function calculate(){
             var results = document.getElementsByClassName("my-input");
             var ch = parseInt(results[(r*colSize)+c].value);
             if(ch!=0 && ch!=1 && ch!=-1){
-                //throw alert("Please insert valid numbers");
+    //            throw alert("Please insert valid numbers");
                 ch = 0; //TO DELETE THIS!!! to add maybe autofill!!!
             }
             map2[r][c] = ch;
@@ -129,35 +127,31 @@ function joinArr(arr){
     var x = 0;
     var same = [];
     while(y<arr.length){
-        if(arr[y].col + arr[y].j == colSize){
-            y++;
-            continue;
-        }
         if(hasSymCol(arr[y])){
             var col = arr[y].col;
             var row = arr[y].row;
             var i = arr[y].i;
             var j = arr[y].j;
             var mul = arr[y].mul;
-            same.push({col,row,i,j,mul});
+            var symcol = true;
+            var symrow = false;
+            same.push({col,row,i,j,mul,symcol,symrow});
             arr.splice(y,1);
-      }
-      else{
-          y++;
-      }
+        }
+        else{
+            y++;
+        }
     }
     while(x<arr.length){
-        if(arr[x].row + arr[x].i == rowSize){
-            x++;
-            continue;
-        }
         if(hasSymRow(arr[x])){
             var col = arr[x].col;
             var row = arr[x].row;
             var i = arr[x].i;
             var j = arr[x].j;
             var mul = arr[x].mul;
-            same.push({col,row,i,j,mul});
+            var symcol = false;
+            var symrow = true;
+            same.push({col,row,i,j,mul,symcol,symrow});
             arr.splice(x,1);
       }
       else{
@@ -181,13 +175,15 @@ function cleanArr(arr){
     }
 }
 function hasSymCol(value){
-    if(isAllSame(value.row, colSize-value.col-value.j,value.i,value.j)){
+    if(colSize-value.col-value.j != value.col &&
+         isAllSame(value.row, colSize-value.col-value.j,value.i,value.j)){
         return true;
     }
     return false;
 }
 function hasSymRow(value){
-    if(isAllSame(rowSize-value.row-value.i, value.col, value.i, value.j)){
+    if(rowSize-value.row-value.i != value.row &&
+         isAllSame(rowSize-value.row-value.i, value.col, value.i, value.j)){
         return true;
     }
     return false;
@@ -199,5 +195,4 @@ function calculateVar(arr){
 }
 function changeMethod(value){
     method = parseInt(value);
-    console.log(method);
 }
