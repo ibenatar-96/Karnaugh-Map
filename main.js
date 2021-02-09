@@ -110,6 +110,7 @@ function retres(){
     }
     arr.sort(function(a,b) {return b.mul - a.mul});
     cleanArr(arr);
+    debugger;
     joinArr(arr);
     calculateVar(arr);
     console.log(arr);
@@ -160,6 +161,7 @@ function joinArr(arr){
           x++;
       }
     }
+    debugger;
     cleanSame(same);
     mergeSame(same);
     removeOverlap();
@@ -207,7 +209,7 @@ function cleanSame(same){
     }
 }
 function areSame(value1,value2){
-    if (value1.col + value2.col + value1.j == colSize &&
+    if (value1.col + value2.col + value1.j == colSize && value1.row == value2.row &&
         value1.j == value2.j && value1.i == value2.i && value1.mul == value2.mul &&
         value1.symcol == value2.symcol && value1.symrow == value2.symrow){
             return true;
@@ -215,13 +217,12 @@ function areSame(value1,value2){
         return false;
 }
 function mergeSame(same){
-    debugger; //TODELETE!!
     for(var i=0; i<same.length; i++){
         var j = i+1;
         while(j<same.length){
             if(areMergeable(same[i],same[j])){
                 same[i].symrow = true;
-                same[i].mul = 2*same[i].mul;
+                same[i].mul = 2*same[i].mul; //return to this, why x2???
                 same.splice(j,1);
             }
             else{
@@ -231,7 +232,7 @@ function mergeSame(same){
     }
 }
 function areMergeable(value1,value2){
-    if(value1.row + value2.row + value1.i == rowSize && value1.col + value2.col + value1.j == colSize &&
+    if(value1.row + value2.row + value1.i == rowSize &&
         value1.i == value2.i && value1.j == value2.j && value1.mul == value2.mul &&
         value1.symcol == value2.symcol && value1.symrow == value2.symrow){
             return true;
@@ -263,50 +264,22 @@ function removeOverlap(){
             }
         }
     }
-    var f = 0;
-    var changedCol = false;
-    var changedRow = false;
-    while(f<same.length){
-        for(var h=0; h<same[f].i; h++){
-            for(var g=0; g<same[f].j; g++){
-                overlap[same[f].row+h][same[f].col+g] = overlap[same[f].row+h][same[f].col+g] + 1;
-            }
+//    var changedCol = false;
+//    var changedRow = false;
+    for(var f=0; f<same.length; f++){
+        addOverlap(same[f].row,same[f].col,same[f].i,same[f].j,overlap);
+        if(same[f].symcol==true){
+            addOverlap(same[f].row,colSize-same[f].col-same[f].j,same[f].i,same[f].j,overlap);
         }
-        if(same[f].symcol==true & same[f].symrow==true){
-            same[f].col = colSize-same[f].col-same[f].j;
-            same[f].symcol = false;
-            changedCol = true;
+        if(same[f].symrow==true){
+            addOverlap(rowSize-same[f].row-same[f].i,same[f].col,same[f].i,same[f].j,overlap);
         }
-    /*    if(changedCol==true){
-            same[f].col = colSize-same[f].col-same[f].j;
-            changedCol = false;
-        }*/
-        else if(same[f].symcol==false & same[f].symrow==true){
-            same[f].row = rowSize-same[f].row-same[f].i;
-            same[f].symrow = false;
-            changedRow = true;
+        if(same[f].symrow==true && same[f].symcol==true){
+            addOverlap(rowSize-same[f].row-same[f].i,colSize-same[f].col-same[f].j,same[f].i,same[f].j,overlap);
         }
-    /*    if(changedRow==true){
-            same[f].row = rowSize-same[f].row-same[f].i;
-            changedRow = false;
-        }*/
-        else if(same[f].symcol==true & same[f].symrow==false){
-            same[f].col = colSize-same[f].col-same[f].j;
-            same[f].symcol = false;
-            changedCol = true;
-        }
-        else if(changedCol==true & changedRow==true & same[f].symcol==false && same[f].symrow==false){
-            same[f].col = colSize-same[f].col-same[f].j;
-            changedCol = changedRow = false;
-        }
-        else if(same[f].symcol==false && same[f].symrow==false){
-            changedCol = changedRow = false;
-            f++;
-        }
-}
+    }
     var k=0;
     while(k<arr.length){
-        debugger;
         var x = true;
         for(var h=0; x==true && h<arr[k].i; h++){
             for(var g=0; x==true && g<arr[k].j; g++){
@@ -316,18 +289,66 @@ function removeOverlap(){
                 }
                 overlap[arr[k].row+h][arr[k].col+g] = overlap[arr[k].row+h][arr[k].col+g] + 1;
                 if(x==true && h==arr[k].i-1 && g==arr[k].j-1){
-//                    for(var a=0; x==true && a<arr[k].i; a++){ //IS THIS NECCASERY?!?!?!?
-//                        for(var b=0; x==true && b<arr[k].j; b++){ //IS THIS NECCASERY!?!
-//                            overlap[arr[k].row+a][arr[k].col+b] = overlap[arr[k].row+a][arr[k].col+b] - 1; //?!?!
                     arr.splice(k,1);
-//                }
-//            }
+                    x=false;
+                }
+            }
         }
-    }
-}
         if(x==false){
             k++;
         }
     }
+    var w=0;
+ /*   while(w<same.length){
+        debugger;
+        var y = true;
+        for(var h=0; h<same[f].i; h++){
+            for(var g=0; g<same[f].j; g++){
+                overlap[same[f].row+h][same[f].col+g] = overlap[same[f].row+h][same[f].col+g] - 1;
+                if(overlap[same[f].row+h][same[f].col+g]==0){
+                    y=false;
+                }
+                overlap[same[f].row+h][same[f].col+g] = overlap[same[f].row+h][same[f].col+g] + 1;
+            }
+        }
+        if(y==true && same[f].symcol==true & same[f].symrow==true){
+            same[f].col = colSize-same[f].col-same[f].j;
+            same[f].symcol = false;
+            changedCol = true;
+        }
+        else if(y==true && same[f].symcol==false & same[f].symrow==true){
+            same[f].row = rowSize-same[f].row-same[f].i;
+            same[f].symrow = false;
+            changedRow = true;
+        }
+        else if(y==true && same[f].symcol==true & same[f].symrow==false){
+            same[f].col = colSize-same[f].col-same[f].j;
+            same[f].symcol = false;
+            changedCol = true;
+        }
+        else if(y==true && changedCol==true & changedRow==true & same[f].symcol==false && same[f].symrow==false){
+            same[f].col = colSize-same[f].col-same[f].j;
+            changedCol = false;
+        }
+        else if(same[f].symcol==false && same[f].symrow==false){
+            if(changedRow==true){
+                same[f].row = rowSize-same[f].row-same[f].i;
+                same[f].symrow = true;
+            }
+            if(changedCol==true){
+                same[f].col = colSize-same[f].col-same[f].j;
+                same[f].symcol = true;
+            }
+            changedCol = changedRow = false;
+            f++;
+        }
+    }*/
     console.log(overlap);
+}
+function addOverlap(row,col,i,j,overlap){
+    for(var h=0; h<i; h++){
+        for(var g=0; g<j; g++){
+            overlap[row+h][col+g] = overlap[row+h][col+g] + 1;
+        }
+    }
 }
