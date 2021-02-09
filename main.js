@@ -110,7 +110,6 @@ function retres(){
     }
     arr.sort(function(a,b) {return b.mul - a.mul});
     cleanArr(arr);
-    debugger;
     joinArr(arr);
     calculateVar(arr);
     console.log(arr);
@@ -129,6 +128,7 @@ function joinArr(arr){
     var y = 0;
     var x = 0;
     same = [];
+    toRem1 = new Set();
     while(y<arr.length){
         if(hasSymCol(arr[y])){
             var col = arr[y].col;
@@ -139,11 +139,9 @@ function joinArr(arr){
             var symcol = true;
             var symrow = false;
             same.push({col,row,i,j,mul,symcol,symrow});
-            arr.splice(y,1);
+            toRem1.add(y);
         }
-        else{
-            y++;
-        }
+        y++;
     }
     while(x<arr.length){
         if(hasSymRow(arr[x])){
@@ -155,15 +153,19 @@ function joinArr(arr){
             var symcol = false;
             var symrow = true;
             same.push({col,row,i,j,mul,symcol,symrow});
-            arr.splice(x,1);
+            toRem1.add(x);
       }
-      else{
-          x++;
-      }
+        x++;
     }
-    debugger;
+    var v = 0;
+    for(var item of toRem1){
+        arr.splice(item-v,1);
+        v++;
+    }
     cleanSame(same);
-    mergeSame(same);
+    debugger;
+    mergeSame(same); //here it dissapears!!
+    cleanOneLastTime(same);
     removeOverlap();
     console.log(same);
 }
@@ -232,12 +234,30 @@ function mergeSame(same){
     }
 }
 function areMergeable(value1,value2){
-    if(value1.row + value2.row + value1.i == rowSize &&
+    if(value1.row + value2.row + value1.i == rowSize &&  value1.col + value2.col + value1.j == colSize &&
         value1.i == value2.i && value1.j == value2.j && value1.mul == value2.mul &&
         value1.symcol == value2.symcol && value1.symrow == value2.symrow){
             return true;
         }
         return false;
+}
+function cleanOneLastTime(same){
+    for(var k=0; k<same.length; k++){
+        var v = k+1;
+        while(v<same.length){
+            if(same[k].col==same[v].col & same[k].row==same[v].row & same[k].i==same[v].i & same[k].j==same[v].j &
+                same[k].symcol==true & same[k].symrow==true & same[v].symrow==true & same[v].symcol==false){
+                    same.splice(v,1);
+                }
+            else if(same[k].col==same[v].col & same[k].row==same[v].row & same[k].i==same[v].i & same[k].j==same[v].j &
+                same[k].symcol==true & same[k].symrow==true & same[v].symrow==false & same[v].symcol==true){
+                    same.splice(v,1);
+                }
+            else{
+                v++;
+            }
+        }
+    }
 }
 function calculateVar(arr){
     for(var i=0; i<arr.length; i++){
@@ -267,6 +287,7 @@ function removeOverlap(){
 //    var changedCol = false;
 //    var changedRow = false;
     for(var f=0; f<same.length; f++){
+        debugger;
         addOverlap(same[f].row,same[f].col,same[f].i,same[f].j,overlap);
         if(same[f].symcol==true){
             addOverlap(same[f].row,colSize-same[f].col-same[f].j,same[f].i,same[f].j,overlap);
