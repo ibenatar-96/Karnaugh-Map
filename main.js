@@ -5,11 +5,16 @@ var table = document.getElementById('tab');
 var map = [];
 var same = [];
 var arr = [];
+var mirror = [];
 
 function changeVars(value){
     var val = parseInt(value);
     colSize = Math.pow(2,Math.ceil(val/2));
     rowSize = Math.pow(2,Math.floor(val/2));
+    generate2();
+}
+function clearInputs(){
+    console.clear();
     generate2();
 }
 function generate2(){
@@ -81,7 +86,7 @@ function calculate(){
         for(var c=0; c<colSize; c++){
             var results = document.getElementsByClassName("my-input");
             var ch = parseInt(results[(r*colSize)+c].value);
-            if(ch!=0 && ch!=1 && ch!=-1){
+            if(ch!==0 && ch!==1 && ch!==-1){
     //            throw alert("Please insert valid numbers");
                 ch = 0; //TO DELETE THIS!!! to add maybe autofill!!!
             }
@@ -91,10 +96,11 @@ function calculate(){
     return map2;
 }
 function retres(){
-    if(method != 0 && method != 1){
+    if(method !== 0 && method !== 1){
         throw alert("Please choose a method");
     }
     arr = [];
+    mirror = [];
     map = calculate();
     for(var row=0; row<rowSize; row++){
         for(var col=0; col<colSize; col++){
@@ -109,7 +115,9 @@ function retres(){
         }
     }
     arr.sort(function(a,b) {return b.mul - a.mul});
+    debugger;
     cleanArr(arr);
+    debugger;
     joinArr(arr);
     calculateVar(arr);
     console.log(arr);
@@ -117,7 +125,7 @@ function retres(){
 function isAllSame(row,col,i,j){
     for(var a=0; a<i; a++){
         for(var b=0; b<j; b++){
-            if(map[row+a][col+b] != method & map[row+a][col+b] != -1){
+            if(map[row+a][col+b] !== method & map[row+a][col+b] !== -1){
                 return false;
             }
         }
@@ -158,15 +166,18 @@ function joinArr(arr){
         x++;
     }
     var v = 0;
-    for(var item of toRem1){
-        arr.splice(item-v,1);
+    var arrToCh = Array.from(toRem1).sort();
+    for(var sz=0; sz<arrToCh.length; sz++){
+        arr.splice(arrToCh[sz]-v);
         v++;
     }
     cleanSame(same);
-    debugger;
     mergeSame(same); //here it dissapears!!
     cleanOneLastTime(same);
-    removeOverlap();
+    findOverlap();
+    if(colSize===8){
+//        anotherSymMirror(same,mirror);
+    }
     console.log(same);
 }
 function cleanArr(arr){
@@ -184,14 +195,14 @@ function cleanArr(arr){
     }
 }
 function hasSymCol(value){
-    if(colSize-value.col-value.j != value.col &&
+    if(colSize-value.col-value.j !== value.col &&
          isAllSame(value.row, colSize-value.col-value.j,value.i,value.j)){
         return true;
     }
     return false;
 }
 function hasSymRow(value){
-    if(rowSize-value.row-value.i != value.row &&
+    if(rowSize-value.row-value.i !== value.row &&
          isAllSame(rowSize-value.row-value.i, value.col, value.i, value.j)){
         return true;
     }
@@ -211,12 +222,10 @@ function cleanSame(same){
     }
 }
 function areSame(value1,value2){
-    if (value1.col + value2.col + value1.j == colSize && value1.row == value2.row &&
-        value1.j == value2.j && value1.i == value2.i && value1.mul == value2.mul &&
-        value1.symcol == value2.symcol && value1.symrow == value2.symrow){
-            return true;
-        }
-        return false;
+    return value1.col + value2.col + value1.j === colSize && value1.row === value2.row &&
+        value1.j === value2.j && value1.i === value2.i && value1.mul === value2.mul &&
+        value1.symcol === value2.symcol && value1.symrow === value2.symrow;
+
 }
 function mergeSame(same){
     for(var i=0; i<same.length; i++){
@@ -227,6 +236,9 @@ function mergeSame(same){
                 same[i].mul = 2*same[i].mul; //return to this, why x2???
                 same.splice(j,1);
             }
+            /*else if(areMergeable(same[i],same[j]===2)){
+                same.splice(j,1);
+            }*/
             else{
                 j++;
             }
@@ -234,23 +246,38 @@ function mergeSame(same){
     }
 }
 function areMergeable(value1,value2){
-    if(value1.row + value2.row + value1.i == rowSize &&  value1.col + value2.col + value1.j == colSize &&
-        value1.i == value2.i && value1.j == value2.j && value1.mul == value2.mul &&
-        value1.symcol == value2.symcol && value1.symrow == value2.symrow){
-            return true;
-        }
-        return false;
+    if (value1.row + value2.row + value1.i === rowSize && value1.col + value2.col + value1.j === colSize &&
+        value1.row !== value2.row && value1.col !== value2.col && value1.i === value2.i && value1.j === value2.j && value1.mul === value2.mul &&
+        value1.symcol === value2.symcol && value1.symrow === value2.symrow){
+        return true;
+    }
+    else if(value1.row + value2.row + value1.i === rowSize && value1.col === value2.col && value1.i === value2.i &&
+        value1.j === value2.j && value1.mul === value2.mul && value1.symcol===true && value1.symrow===false &&
+        value2.symcol===true && value2.symrow===false){
+        return true;
+    }
+    else if(value1.row === value2.row && value1.col + value2.col + value1.j === colSize && value1.i === value2.i &&
+        value1.j === value2.j && value1.mul === value2.mul && value1.symcol===true && value1.symrow===false &&
+        value2.symcol===true && value2.symrow===false){
+        return true;
+    }
+   /* else if(value1.row + value2.row + value1.i === rowSize && value1.col === value2.col && value1.i === value2.i &&
+        value1.j === value2.j && value1.mul === value2.mul && value1.symcol===false && value1.symrow===true &&
+        value2.symcol===false && value2.symrow===true){
+        return 2;
+        }*/  //MAYBE DELETE LATER!!
+    return false;
 }
 function cleanOneLastTime(same){
     for(var k=0; k<same.length; k++){
         var v = k+1;
         while(v<same.length){
-            if(same[k].col==same[v].col & same[k].row==same[v].row & same[k].i==same[v].i & same[k].j==same[v].j &
-                same[k].symcol==true & same[k].symrow==true & same[v].symrow==true & same[v].symcol==false){
+            if(same[k].col===same[v].col & same[k].row===same[v].row & same[k].i===same[v].i & same[k].j===same[v].j &
+                same[k].symcol===true & same[k].symrow===true & same[v].symrow===true & same[v].symcol===false){
                     same.splice(v,1);
                 }
-            else if(same[k].col==same[v].col & same[k].row==same[v].row & same[k].i==same[v].i & same[k].j==same[v].j &
-                same[k].symcol==true & same[k].symrow==true & same[v].symrow==false & same[v].symcol==true){
+            else if(same[k].col===same[v].col & same[k].row===same[v].row & same[k].i===same[v].i & same[k].j===same[v].j &
+                same[k].symcol===true & same[k].symrow===true & same[v].symrow===false & same[v].symcol===true){
                     same.splice(v,1);
                 }
             else{
@@ -267,7 +294,8 @@ function calculateVar(arr){
 function changeMethod(value){
     method = parseInt(value);
 }
-function removeOverlap(){
+
+function findOverlap(){
     var overlap = new Array(rowSize);
     for(var r=0; r<rowSize; r++){
         overlap[r] = new Array(colSize);
@@ -278,54 +306,72 @@ function removeOverlap(){
         }
     }
     for(var k=0; k<arr.length; k++){
-        for(var h=0; h<arr[k].i; h++){
-            for(var g=0; g<arr[k].j; g++){
-                overlap[arr[k].row+h][arr[k].col+g] = overlap[arr[k].row+h][arr[k].col+g] + 1;
-            }
-        }
+        addOverlap(arr[k].row,arr[k].col,arr[k].i,arr[k].j,overlap);
     }
-//    var changedCol = false;
-//    var changedRow = false;
     for(var f=0; f<same.length; f++){
-        debugger;
-        addOverlap(same[f].row,same[f].col,same[f].i,same[f].j,overlap);
-        if(same[f].symcol==true){
-            addOverlap(same[f].row,colSize-same[f].col-same[f].j,same[f].i,same[f].j,overlap);
-        }
-        if(same[f].symrow==true){
-            addOverlap(rowSize-same[f].row-same[f].i,same[f].col,same[f].i,same[f].j,overlap);
-        }
-        if(same[f].symrow==true && same[f].symcol==true){
-            addOverlap(rowSize-same[f].row-same[f].i,colSize-same[f].col-same[f].j,same[f].i,same[f].j,overlap);
-        }
+        addSymOverLap(same[f],overlap);
     }
     var k=0;
-    while(k<arr.length){
-        var x = true;
-        for(var h=0; x==true && h<arr[k].i; h++){
-            for(var g=0; x==true && g<arr[k].j; g++){
-                overlap[arr[k].row+h][arr[k].col+g] = overlap[arr[k].row+h][arr[k].col+g] - 1;
-                if(overlap[arr[k].row+h][arr[k].col+g] == 0){
-                    x=false;
-                }
-                overlap[arr[k].row+h][arr[k].col+g] = overlap[arr[k].row+h][arr[k].col+g] + 1;
-                if(x==true && h==arr[k].i-1 && g==arr[k].j-1){
-                    arr.splice(k,1);
-                    x=false;
-                }
-            }
+    arr.sort(function(a,b) {return a.mul - b.mul});
+    same.sort(function(a,b) {return a.mul - b.mul});
+    for(var w=0; w<arr.length; w++){
+        if(removeOverlap(arr[k].row,arr[k].col,arr[k].i,arr[k].j,overlap)){
+            arr.splice(w,1);
         }
-        if(x==false){
-            k++;
+        else{
+            addOverlap(arr[k].row,arr[k].col,arr[k].i,arr[k].j,overlap);
         }
     }
-    var w=0;
+    for(var i=0; i<same.length; i++){
+        var check = true;
+        check = removeOverlap(same[i].row,same[i].col,same[i].i,same[i].j,overlap) && check;
+        if(same[i].symcol===true){
+            check = removeOverlap(same[i].row,colSize-same[i].col-same[i].j,same[i].i,same[i].j,overlap) && check;
+        }
+        if(same[i].symrow===true){
+            check = removeOverlap(rowSize-same[i].row-same[i].i,same[i].col,same[i].i,same[i].j,overlap) && check;
+        }
+        if(same[i].symrow===true & same[i].symcol===true){
+            check = removeOverlap(rowSize-same[i].row-same[i].i,colSize-same[i].col-same[i].j,same[i].i,same[i].j,overlap) && check;
+        }
+        if (check===true){
+            same.splice(i,1);
+        }
+        else{
+            addSymOverLap(same[i],overlap);
+        }
+    }
     console.log(overlap);
 }
-function addOverlapSym(row,col,i,j,overlap){
+function addOverlap(row,col,i,j,overlap){
     for(var h=0; h<i; h++){
         for(var g=0; g<j; g++){
             overlap[row+h][col+g] = overlap[row+h][col+g] + 1;
         }
     }
 }
+function removeOverlap(row,col,i,j,overlap){
+    var ret = true;
+    for(var h=0; h<i; h++){
+        for(var g=0; g<j; g++){
+            overlap[row+h][col+g] = overlap[row+h][col+g] - 1;
+            if(overlap[row+h][col+g]===0){
+                ret=false;
+            }
+        }
+    }
+    return ret;
+}
+function addSymOverLap(value,overlap){
+    addOverlap(value.row,value.col,value.i,value.j,overlap);
+    if(value.symcol===true){
+        addOverlap(value.row,colSize-value.col-value.j,value.i,value.j,overlap);
+    }
+    if(value.symrow===true){
+        addOverlap(rowSize-value.row-value.i,value.col,value.i,value.j,overlap);
+    }
+    if(value.symrow===true && value.symcol===true){
+        addOverlap(rowSize-value.row-value.i,colSize-value.col-value.j,value.i,value.j,overlap);
+    }
+}
+//WHAT I NEED TO DO IS GO OVER THE CODE FROM THE START AND THINK ABOUT NEW IDEAS!!!
