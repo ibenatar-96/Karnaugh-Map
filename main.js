@@ -374,4 +374,3 @@ function addSymOverLap(value,overlap){
         addOverlap(rowSize-value.row-value.i,colSize-value.col-value.j,value.i,value.j,overlap);
     }
 }
-//WHAT I NEED TO DO IS GO OVER THE CODE FROM THE START AND THINK ABOUT NEW IDEAS!!!
